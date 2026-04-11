@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chenies & Latimer Fantasy Cricket</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:   #F5F0E8;
+  --cream-2: #EDE8DF;
+  --dark:    #1A1A14;
+  --green:   #2D5016;
+  --green-l: #3D6B20;
+  --green-hl:rgba(45,80,22,0.08);
+  --lime:    #8BBF3C;
+  --gold:    #C9A84C;
+  --gold-bg: rgba(201,168,76,0.12);
+  --red:     #B83227;
+  --red-bg:  rgba(184,50,39,0.09);
+  --ink:     #2C2C20;
+  --muted:   #6B6B54;
+  --faint:   #A8A892;
+  --rule:    rgba(45,80,22,0.12);
+  --surface: #FFFFFF;
+  --sans:    'DM Sans', system-ui, sans-serif;
+  --serif:   'Playfair Display', Georgia, serif;
+  --mono:    'DM Mono', 'Courier New', monospace;
+  --rsm: 6px; --rmd: 10px; --rlg: 14px;
+  --t: 160ms cubic-bezier(0.16,1,0.3,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;min-height:100dvh;-webkit-font-smoothing:antialiased;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(45,80,22,0.035) 39px,rgba(45,80,22,0.035) 40px);}
+button{cursor:pointer;font-family:inherit;}
+input{font-family:inherit;}
+
+header{background:var(--blue);padding:24px 40px 22px;position:relative;overflow:hidden;}
+header::after{content:'🏏';position:absolute;right:40px;top:50%;transform:translateY(-50%) rotate(-20deg);font-size:68px;opacity:.1;pointer-events:none;}
+.hdr{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;}
+.logo{color:var(--lime);flex-shrink:0;}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,0.5);margin-bottom:2px;}
+header h1{font-family:var(--serif);font-size:clamp(22px,3.5vw,34px);font-weight:900;line-height:1.05;color:var(--cream);}
+header h1 span{color:var(--lime);}
+
+.bstrip{background:var(--dark);padding:10px 40px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.2);}
+.blabel{font-family:var(--mono);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(245,240,232,.45);white-space:nowrap;}
+.bfig{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--lime);white-space:nowrap;transition:color var(--t);}
+.bfig.over{color:#E8564A;}
+.btrack{flex:1;min-width:100px;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;}
+.bfill{height:100%;background:var(--lime);border-radius:3px;transition:width .35s ease,background .35s ease;}
+.bfill.over{background:#E8564A;}
+.scount{font-family:var(--mono);font-size:12px;color:rgba(245,240,232,.6);white-space:nowrap;}
+.scount strong{color:var(--cream);}
+
+.main{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:28px 24px 80px;display:grid;grid-template-columns:1fr 310px;gap:28px;align-items:start;}
+@media(max-width:840px){.main{grid-template-columns:1fr;}header{padding:18px 20px;}header::after{display:none;}.bstrip{padding:10px 16px;gap:12px;}.sidebar{position:static;}}
+@media(max-width:420px){.btrack{display:none;}}
+
+.tabs{display:flex;border-bottom:2px solid var(--rule);}
+.tbtn{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:10px 20px;border:none;background:transparent;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:color var(--t),border-color var(--t);}
+.tbtn:hover{color:var(--green);}
+.tbtn.on{color:var(--green);border-bottom-color:var(--green);}
+.pane{display:none;padding-top:22px;}
+.pane.on{display:block;}
+
+.fbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.fbtn{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:5px 14px;border:1.5px solid var(--rule);border-radius:20px;background:transparent;color:var(--muted);transition:all var(--t);}
+.fbtn:hover,.fbtn.on{background:var(--green);border-color:var(--green);color:var(--cream);}
+.sbox{flex:1;min-width:140px;font-size:13px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;background:white;color:var(--ink);outline:none;transition:border-color var(--t);}
+.sbox:focus{border-color:var(--green);}
+
+.ptable{width:100%;border-collapse:collapse;}
+.ptable thead th{font-family:var(--mono);font-size:9px;letter-spacing:1.3px;text-transform:uppercase;color:var(--faint);padding:7px 10px;border-bottom:1.5px solid var(--rule);text-align:left;}
+.ptable thead th.c{text-align:center;}
+.ptable tbody tr{border-bottom:1px solid var(--rule);}
+.ptable tbody tr.sel{background:rgba(45,80,22,0.07);}
+.ptable tbody tr.dim{opacity:.38;}
+.ptable td{padding:9px 10px;vertical-align:middle;}
+.pname{font-weight:500;color:var(--ink);font-size:14px;}
+.psquad{font-size:11px;color:var(--muted);margin-top:1px;}
+.rbadge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.8px;text-transform:uppercase;padding:2px 7px;border-radius:10px;font-weight:500;}
+.r-WK {background:#FFF0D0;color:#7A5200;}
+.r-BAT{background:#D4EAFF;color:#003F7A;}
+.r-AR {background:#EAD4FF;color:#4A007A;}
+.r-BWL{background:#D4FFE8;color:#005A28;}
+.pprice{font-family:var(--mono);font-size:13px;color:var(--green);font-weight:500;}
+.pcell{text-align:center;width:50px;}
+
+.pbtn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:50%;
+  border:1.5px solid var(--green);
+  background:transparent;color:var(--green);
+  font-size:18px;font-weight:700;line-height:1;padding:0;
+  cursor:pointer;
+  transition:background var(--t),color var(--t);
+}
+.pbtn:hover{background:var(--green);color:var(--cream);}
+.pbtn.picked{background:var(--green);color:var(--cream);}
+.pbtn.cant{opacity:.3;cursor:not-allowed;border-color:var(--faint);color:var(--faint);}
+
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-style:italic;font-size:14px;}
+
+.lbrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule);}
+.lbrow:last-child{border-bottom:none;}
+.lbrank{font-family:var(--serif);font-size:19px;font-weight:700;color:var(--faint);width:30px;text-align:center;flex-shrink:0;}
+.lbrank.g{color:var(--gold);}.lbrank.s{color:#9E9E9E;}.lbrank.b{color:#A06040;}
+.lbinfo{flex:1;}.lbname{font-weight:500;font-size:14px;}.lbteam{font-size:12px;color:var(--muted);}
+.lbpts{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--green);}
+.lbempty{color:var(--muted);font-style:italic;text-align:center;padding:36px 0;font-size:14px;}
+
+.sidebar{position:sticky;top:54px;}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--rlg);padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.07);}
+.stitle{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--green);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.stitle::after{content:'';flex:1;height:1px;background:var(--rule);}
+.fgroup{margin-bottom:12px;}.fgroup:last-child{margin-bottom:0;}
+.flabel{display:block;font-family:var(--mono);font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.finput{width:100%;font-size:14px;padding:8px 11px;border:1.5px solid var(--rule);border-radius:var(--rsm);color:var(--ink);background:var(--cream);outline:none;transition:border-color var(--t);}
+.finput:focus{border-color:var(--green);}.finput.err{border-color:var(--red);}
+
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.rchip{border:1.5px solid var(--rule);border-radius:var(--rmd);padding:9px 10px;text-align:center;transition:border-color var(--t),background var(--t);}
+.rchip-label{font-family:var(--mono);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);display:block;}
+.rchip-count{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--green);display:block;line-height:1.15;}
+.rchip-range{font-family:var(--mono);font-size:8px;color:var(--faint);}
+.rchip.ok  {border-color:rgba(45,80,22,.35);}
+.rchip.warn{border-color:var(--gold);background:var(--gold-bg);}
+.rchip.err {border-color:var(--red);background:var(--red-bg);}
+
+.sqlist{list-style:none;}
+.sqitem{display:flex;align-items:center;gap:6px;padding:7px 0;border-bottom:1px solid var(--rule);font-size:13px;}
+.sqitem:last-child{border-bottom:none;}
+.sqname{font-weight:500;line-height:1.2;flex:1;}
+.sqsquad{font-size:10px;color:var(--muted);display:block;}
+.capbtn{font-family:var(--mono);font-size:9px;letter-spacing:.5px;padding:2px 7px;border-radius:4px;border:1px solid var(--rule);background:transparent;color:var(--muted);transition:all var(--t);white-space:nowrap;}
+.capbtn:hover{border-color:var(--gold);color:var(--gold);}
+.capbtn.iscap{background:var(--gold);border-color:var(--gold);color:var(--dark);font-weight:500;}
+.rmbtn{color:var(--faint);font-size:18px;line-height:1;padding:1px 3px;border:none;background:none;transition:color var(--t);flex-shrink:0;}
+.rmbtn:hover{color:var(--red);}
+.sqempty{color:var(--muted);font-style:italic;font-size:13px;padding:6px 0;}
+.caphint{font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.45;}
+.caphint .g{color:var(--gold);font-weight:600;}
+.tally{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.7;}
+.tally .ok{color:var(--green);font-weight:500;}.tally .bad{color:var(--red);font-weight:500;}
+
+.subbtn{width:100%;font-family:var(--serif);font-size:17px;font-weight:700;padding:14px;border:none;border-radius:var(--rmd);background:var(--green);color:var(--cream);transition:background var(--t),transform var(--t),box-shadow var(--t);}
+.subbtn:hover:not(:disabled){background:var(--green-l);transform:translateY(-1px);box-shadow:0 5px 18px rgba(45,80,22,.28);}
+.subbtn:disabled{opacity:.45;cursor:not-allowed;}
+.subbtn.done{background:#437a22;cursor:default;}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(245,240,232,.3);border-top-color:var(--cream);border-radius:50%;animation:sp .65s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.msg{border-radius:var(--rmd);padding:12px 14px;font-size:13px;margin-bottom:14px;line-height:1.5;}
+.msg-err{background:var(--red-bg);border:1px solid rgba(184,50,39,.25);color:#7B1A10;}
+.msg-ok{background:var(--green-hl);border:1px solid rgba(45,80,22,.3);color:var(--green);}
+.msg ul{margin:6px 0 0 16px;}.msg li{margin-bottom:3px;}
+.skel{background:linear-gradient(90deg,var(--cream-2) 25%,#e8e3da 50%,var(--cream-2) 75%);background-size:200% 100%;animation:sh 1.4s ease-in-out infinite;border-radius:var(--rsm);margin-bottom:10px;}
+@keyframes sh{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+/* ── MY TEAM LOOKUP ── */
+.myteam-lookup{padding-top:4px;}
+.lookup-hint{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.5;}
+.lookup-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.lookup-input{flex:1;min-width:180px;}
+.lookup-btn{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:9px 20px;border:none;border-radius:var(--rsm);background:var(--green);color:var(--cream);cursor:pointer;transition:background var(--t);}
+.lookup-btn:hover{background:var(--green-l);}
+.team-card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--rlg);padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.07);}
+.team-card-header{margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
+.team-card-name{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--green);}
+.team-card-meta{font-size:12px;color:var(--muted);margin-top:2px;font-family:var(--mono);}
+.team-player-list{list-style:none;}
+.team-player-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--rule);font-size:14px;}
+.team-player-item:last-child{border-bottom:none;}
+.team-player-name{flex:1;font-weight:500;}
+.cap-badge{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 7px;border-radius:4px;background:var(--gold);color:var(--dark);}
+.team-budget{margin-top:12px;padding-top:10px;border-top:1px solid var(--rule);font-family:var(--mono);font-size:12px;color:var(--muted);}
+.team-budget strong{color:var(--green);}
+.lookup-spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(45,80,22,.2);border-top-color:var(--green);border-radius:50%;animation:sp .65s linear infinite;vertical-align:middle;margin-right:6px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <svg class="logo" width="36" height="44" viewBox="0 0 36 44" fill="none" aria-hidden="true">
+      <rect x="7"  y="8" width="4" height="30" rx="2" fill="currentColor" opacity=".9"/>
+      <rect x="16" y="8" width="4" height="30" rx="2" fill="currentColor"/>
+      <rect x="25" y="8" width="4" height="30" rx="2" fill="currentColor" opacity=".9"/>
+      <rect x="5"  y="6" width="10" height="3" rx="1.5" fill="currentColor" opacity=".7"/>
+      <rect x="21" y="6" width="10" height="3" rx="1.5" fill="currentColor" opacity=".7"/>
+    </svg>
+    <div>
+      <div class="eyebrow">Season 2026</div>
+      <h1>CLCC <span>Fantasy Cricket</span></h1>
+    </div>
+  </div>
+</header>
+
+<div class="bstrip" role="status" aria-live="polite">
+  <span class="blabel">Budget</span>
+  <span class="bfig" id="bfig">£0.0 / £100m</span>
+  <div class="btrack" aria-hidden="true"><div class="bfill" id="bfill" style="width:0%"></div></div>
+  <span class="scount"><strong id="scnt">0</strong> / 11 players</span>
+</div>
+
+<div class="main">
+  <div class="left-col">
+    <div class="tabs">
+      <button class="tbtn on"  onclick="switchTab('pick',this)">Pick Players</button>
+      <button class="tbtn"     onclick="switchTab('lb',this)">Leaderboard</button>
+      <!-- ★ NEW TAB -->
+      <button class="tbtn"     onclick="switchTab('myteam',this)">My Team</button>
+    </div>
+
+    <div class="pane on" id="pane-pick">
+      <div class="fbar" style="margin-top:4px">
+        <input class="sbox" id="searchBox" type="search" placeholder="Search player or squad…" oninput="renderTable()">
+        <button class="fbtn on"  onclick="setFilter('All',this)">All</button>
+        <button class="fbtn"     onclick="setFilter('Wicketkeeper',this)">WK</button>
+        <button class="fbtn"     onclick="setFilter('Batter',this)">BAT</button>
+        <button class="fbtn"     onclick="setFilter('All-Rounder',this)">AR</button>
+        <button class="fbtn"     onclick="setFilter('Bowler',this)">BWL</button>
+      </div>
+      <div id="tableWrap">
+        <div style="padding:8px 0">
+          <div class="skel" style="width:100%;height:14px"></div>
+          <div class="skel" style="width:90%;height:14px"></div>
+          <div class="skel" style="width:95%;height:14px"></div>
+          <div class="skel" style="width:80%;height:14px"></div>
+          <div class="skel" style="width:88%;height:14px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pane" id="pane-lb">
+      <div id="lbWrap"><p class="lbempty">Loading leaderboard…</p></div>
+    </div>
+
+    <!-- ★ NEW PANE -->
+    <div class="pane" id="pane-myteam">
+      <div class="myteam-lookup">
+        <p class="lookup-hint">Enter the email address you used when submitting your team to view your XI.</p>
+        <div class="lookup-row">
+          <input class="finput lookup-input" id="lookupEmail" type="email"
+                 placeholder="you@example.com" autocomplete="email">
+          <button class="lookup-btn" onclick="lookupTeam()">Find My Team</button>
+        </div>
+        <div id="lookupResult"></div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="card">
+      <div class="stitle">Your Details</div>
+      <div class="fgroup">
+        <label class="flabel" for="managerName">Your name</label>
+        <input class="finput" id="managerName" type="text" placeholder="e.g. James Smith" autocomplete="name">
+      </div>
+      <div class="fgroup">
+        <label class="flabel" for="managerEmail">Email address</label>
+        <input class="finput" id="managerEmail" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="fgroup">
+        <label class="flabel" for="teamName">Team name <span style="color:var(--faint)">(optional)</span></label>
+        <input class="finput" id="teamName" type="text" placeholder="e.g. Wembley Wildcats XI">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="stitle">Roles</div>
+      <div class="rgrid">
+        <div class="rchip" id="chip-WK">
+          <span class="rchip-label">Wicketkeeper</span>
+          <span class="rchip-count" id="cnt-WK">0</span>
+          <span class="rchip-range">min 1</span>
+        </div>
+        <div class="rchip" id="chip-BAT">
+          <span class="rchip-label">Batter</span>
+          <span class="rchip-count" id="cnt-BAT">0</span>
+          <span class="rchip-range">min 3</span>
+        </div>
+        <div class="rchip" id="chip-AR">
+          <span class="rchip-label">All-Rounder</span>
+          <span class="rchip-count" id="cnt-AR">0</span>
+          <span class="rchip-range">min 2</span>
+        </div>
+        <div class="rchip" id="chip-BWL">
+          <span class="rchip-label">Bowler</span>
+          <span class="rchip-count" id="cnt-BWL">0</span>
+          <span class="rchip-range">min 3</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="stitle">Your XI</div>
+      <p class="caphint">Tap <span class="g">C</span> to set your captain (×2 pts). Required to submit.</p>
+      <ul class="sqlist" id="squadList"><li class="sqempty">No players selected yet.</li></ul>
+      <div class="tally" id="tally"></div>
+    </div>
+
+    <div id="msgBox"></div>
+    <button class="subbtn" id="submitBtn" onclick="submitTeam()" disabled>Submit Team</button>
+  </aside>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════
+const API_URL       = "https://script.google.com/macros/s/AKfycbw8ZLTsmClvJnVGUJ2JZPXSCxuAV2M4p6zdco3PWiN7CvcqbcboHioB98dvmAjD-ElV-g/exec";
+const BUDGET        = 100;
+const SQUAD_SIZE    = 11;
+const MIN_PER_SQUAD = 2;
+const ROLE_LIMITS   = {
+  "Wicketkeeper": { min:1, max:99, abbr:"WK"  },
+  "Batter":       { min:3, max:99, abbr:"BAT" },
+  "All-Rounder":  { min:2, max:99, abbr:"AR"  },
+  "Bowler":       { min:3, max:99, abbr:"BWL" },
+};
+// ═══════════════════════════════════════════════════
+
+let players      = [];
+let selected     = [];
+let captainId    = null;
+let activeFilter = "All";
+
+(async function init() {
+  await Promise.all([loadPlayers(), loadLeaderboard()]);
+})();
+
+async function apiFetch(payload) {
+  const r = await fetch(API_URL, {
+    method:  "POST",
+    headers: {"Content-Type":"text/plain"},
+    body:    JSON.stringify(payload),
+  });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.json();
+}
+
+async function loadPlayers() {
+  try {
+    const res = await apiFetch({ action:"getPlayers" });
+    if (res.success) { players = res.players; renderTable(); }
+    else setTableMsg("Could not load players: " + (res.error||"unknown"));
+  } catch(e) {
+    setTableMsg("Cannot reach API — check the API_URL in the script config.");
+  }
+}
+function setTableMsg(msg) {
+  document.getElementById("tableWrap").innerHTML = '<p class="empty">' + esc(msg) + "</p>";
+}
+
+async function loadLeaderboard() {
+  try {
+    const res = await apiFetch({ action:"getLeaderboard" });
+    renderLB(res.success ? res.leaderboard : []);
+  } catch(e) { renderLB([]); }
+}
+function renderLB(lb) {
+  const el = document.getElementById("lbWrap");
+  if (!lb || !lb.length) {
+    el.innerHTML = '<p class="lbempty">No scores yet — check back after the first match!</p>';
+    return;
+  }
+  const medals = ["g","s","b"];
+  el.innerHTML = lb.map(function(r,i) {
+    return '<div class="lbrow">'
+      + '<span class="lbrank ' + (medals[i]||"") + '">' + r.rank + "</span>"
+      + '<div class="lbinfo"><div class="lbname">' + esc(r.name) + "</div>"
+      + '<div class="lbteam">' + esc(r.teamName) + "</div></div>"
+      + '<span class="lbpts">' + r.points + " pts</span></div>";
+  }).join("");
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll(".tbtn").forEach(function(b){ b.classList.remove("on"); });
+  document.querySelectorAll(".pane").forEach(function(p){ p.classList.remove("on"); });
+  btn.classList.add("on");
+  document.getElementById("pane-" + name).classList.add("on");
+}
+
+function setFilter(role, btn) {
+  activeFilter = role;
+  document.querySelectorAll(".fbtn").forEach(function(b){ b.classList.remove("on"); });
+  btn.classList.add("on");
+  renderTable();
+}
+
+function renderTable() {
+  var query  = (document.getElementById("searchBox").value || "").toLowerCase();
+  var spent  = getSpent();
+  var canAdd = selected.length < SQUAD_SIZE;
+  var filtered = players.filter(function(p) {
+    var roleOk  = activeFilter === "All" || p.role === activeFilter;
+    var queryOk = !query
+      || p.name.toLowerCase().indexOf(query) !== -1
+      || (p.squad||"").toLowerCase().indexOf(query) !== -1;
+    return roleOk && queryOk;
+  });
+  var wrap = document.getElementById("tableWrap");
+  if (!filtered.length) {
+    wrap.innerHTML = '<p class="empty">No players match your search.</p>';
+    return;
+  }
+  var table = document.createElement("table");
+  table.className = "ptable";
+  var thead = table.createTHead();
+  var hrow  = thead.insertRow();
+  ["Player","Role","Price","Pick"].forEach(function(txt, i) {
+    var th = document.createElement("th");
+    th.textContent = txt;
+    if (i === 3) th.className = "c";
+    hrow.appendChild(th);
+  });
+  var tbody = table.createTBody();
+  filtered.forEach(function(p) {
+    var isSel     = selected.indexOf(p.id) !== -1;
+    var canAfford = isSel || (spent + p.price) <= BUDGET;
+    var cant      = !isSel && (!canAdd || !canAfford);
+    var abbr      = (ROLE_LIMITS[p.role] || {}).abbr || p.role;
+    var tr = tbody.insertRow();
+    if (isSel) tr.classList.add("sel");
+    if (cant)  tr.classList.add("dim");
+    var td1 = tr.insertCell();
+    var nameDiv = document.createElement("div");
+    nameDiv.className = "pname"; nameDiv.textContent = p.name; td1.appendChild(nameDiv);
+    if (p.squad) {
+      var sqDiv = document.createElement("div");
+      sqDiv.className = "psquad"; sqDiv.textContent = p.squad; td1.appendChild(sqDiv);
+    }
+    var td2 = tr.insertCell();
+    var badge = document.createElement("span");
+    badge.className = "rbadge r-" + abbr; badge.textContent = abbr; td2.appendChild(badge);
+    var td3 = tr.insertCell();
+    td3.className = "pprice"; td3.textContent = "\u00a3" + p.price.toFixed(1);
+    var td4 = tr.insertCell();
+    td4.className = "pcell";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "pbtn" + (isSel ? " picked" : "") + (cant ? " cant" : "");
+    btn.textContent = isSel ? "\u2713" : "+";
+    btn.title = isSel ? "Remove from XI" : cant ? "Can't add" : "Add to XI";
+    (function(pid) {
+      btn.addEventListener("click", function(e) { e.stopPropagation(); togglePlayer(pid); });
+    }(p.id));
+    td4.appendChild(btn);
+  });
+  wrap.innerHTML = "";
+  wrap.appendChild(table);
+}
+
+function togglePlayer(id) {
+  var idx = selected.indexOf(id);
+  if (idx !== -1) {
+    selected.splice(idx, 1);
+    if (captainId === id) captainId = null;
+  } else {
+    if (selected.length >= SQUAD_SIZE) return;
+    var p = getPlayer(id); if (!p) return;
+    if (getSpent() + p.price > BUDGET) return;
+    selected.push(id);
+  }
+  update();
+}
+
+function setCaptain(id) {
+  captainId = (captainId === id) ? null : id;
+  update();
+}
+
+function update() {
+  updateBudget(); updateRoles(); updateSquadList(); renderTable(); updateSubmit();
+}
+
+function getPlayer(id) {
+  for (var i = 0; i < players.length; i++) { if (players[i].id === id) return players[i]; }
+  return null;
+}
+function getSpent() {
+  var t = 0;
+  selected.forEach(function(id) { var p = getPlayer(id); if (p) t += p.price; });
+  return t;
+}
+
+function updateBudget() {
+  var spent = getSpent(), over = spent > BUDGET;
+  document.getElementById("bfig").textContent = "\u00a3" + spent.toFixed(1) + " / \u00a3" + BUDGET + "m";
+  document.getElementById("bfig").className   = "bfig" + (over ? " over" : "");
+  document.getElementById("bfill").style.width = Math.min((spent/BUDGET)*100,100) + "%";
+  document.getElementById("bfill").className   = "bfill" + (over ? " over" : "");
+  document.getElementById("scnt").textContent  = selected.length;
+}
+
+function updateRoles() {
+  var counts = {};
+  selected.forEach(function(id) { var p = getPlayer(id); if (p) counts[p.role] = (counts[p.role]||0)+1; });
+  Object.keys(ROLE_LIMITS).forEach(function(role) {
+    var cfg = ROLE_LIMITS[role], n = counts[role]||0, full = selected.length === SQUAD_SIZE;
+    document.getElementById("cnt-" + cfg.abbr).textContent = n;
+    var chip = document.getElementById("chip-" + cfg.abbr);
+    var cls  = "rchip";
+    if (n > 0) { if (n >= cfg.min && n <= cfg.max) cls += " ok"; else cls += full ? " err" : " warn"; }
+    chip.className = cls;
+  });
+}
+
+function updateSquadList() {
+  var list = document.getElementById("squadList"), tally = document.getElementById("tally");
+  if (!selected.length) {
+    list.innerHTML = '<li class="sqempty">No players selected yet.</li>';
+    tally.innerHTML = ""; return;
+  }
+  list.innerHTML = "";
+  selected.forEach(function(id) {
+    var p = getPlayer(id); if (!p) return;
+    var isCap = captainId === id;
+    var li = document.createElement("li"); li.className = "sqitem";
+    var info = document.createElement("div"); info.style.flex = "1";
+    var nm = document.createElement("span"); nm.className = "sqname"; nm.textContent = p.name; info.appendChild(nm);
+    if (p.squad) { var sq = document.createElement("span"); sq.className = "sqsquad"; sq.textContent = p.squad; info.appendChild(sq); }
+    li.appendChild(info);
+    var capBtn = document.createElement("button"); capBtn.type = "button";
+    capBtn.className = "capbtn" + (isCap ? " iscap" : ""); capBtn.textContent = "C";
+    capBtn.title = isCap ? "Remove captain" : "Set as captain (\u00d72 pts)";
+    (function(pid){ capBtn.addEventListener("click", function(){ setCaptain(pid); }); }(id));
+    li.appendChild(capBtn);
+    var rmBtn = document.createElement("button"); rmBtn.type = "button";
+    rmBtn.className = "rmbtn"; rmBtn.textContent = "\u00d7"; rmBtn.title = "Remove " + p.name;
+    (function(pid){ rmBtn.addEventListener("click", function(){ togglePlayer(pid); }); }(id));
+    li.appendChild(rmBtn);
+    list.appendChild(li);
+  });
+  var squadCounts = {};
+  selected.forEach(function(id) { var p = getPlayer(id); if (p && p.squad) squadCounts[p.squad] = (squadCounts[p.squad]||0)+1; });
+  var parts = Object.keys(squadCounts).map(function(sq) {
+    var c = squadCounts[sq];
+    return '<span class="' + (c >= MIN_PER_SQUAD ? "ok" : "bad") + '">' + esc(sq) + ": " + c + "</span>";
+  });
+  tally.innerHTML = parts.length ? "Per squad: " + parts.join(" \u00b7 ") : "";
+}
+
+function updateSubmit() {
+  var btn = document.getElementById("submitBtn");
+  if (btn.classList.contains("done")) return;
+  var counts = {};
+  selected.forEach(function(id) { var p = getPlayer(id); if (p) counts[p.role] = (counts[p.role]||0)+1; });
+  var rolesOk = Object.keys(ROLE_LIMITS).every(function(role) {
+    var n = counts[role]||0; return n >= ROLE_LIMITS[role].min && n <= ROLE_LIMITS[role].max;
+  });
+  var sc = {};
+  selected.forEach(function(id) { var p = getPlayer(id); if (p && p.squad) sc[p.squad] = (sc[p.squad]||0)+1; });
+  var squadOk = Object.keys(sc).every(function(s){ return sc[s] >= MIN_PER_SQUAD; });
+  btn.disabled = !(selected.length === SQUAD_SIZE && captainId && getSpent() <= BUDGET && rolesOk && squadOk);
+}
+
+async function submitTeam() {
+  var name   = document.getElementById("managerName").value.trim();
+  var email  = document.getElementById("managerEmail").value.trim();
+  var tname  = document.getElementById("teamName").value.trim();
+  var msgBox = document.getElementById("msgBox");
+  document.getElementById("managerName").classList.remove("err");
+  document.getElementById("managerEmail").classList.remove("err");
+  var fieldErr = false;
+  if (!name)  { document.getElementById("managerName").classList.add("err");  fieldErr = true; }
+  if (!email || email.indexOf("@") === -1) { document.getElementById("managerEmail").classList.add("err"); fieldErr = true; }
+  if (fieldErr) {
+    msgBox.innerHTML = '<div class="msg msg-err">Please fill in your name and a valid email address.</div>';
+    return;
+  }
+  var btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Submitting\u2026';
+  msgBox.innerHTML = "";
+  try {
+    var res = await apiFetch({
+      action: "submit", submitterName: name, submitterEmail: email.toLowerCase(),
+      teamName: tname || name + "'s XI", playerIds: selected.slice(), captainId: captainId,
+    });
+    if (res.success) {
+      msgBox.innerHTML = '<div class="msg msg-ok">\u2713 <strong>Team submitted!</strong><br>' + esc(res.message) + "</div>";
+      btn.textContent = "Team Submitted \u2713"; btn.classList.add("done");
+    } else {
+      var errs = res.errors
+        ? "<ul>" + res.errors.map(function(e){ return "<li>" + esc(e) + "</li>"; }).join("") + "</ul>"
+        : esc(res.error || "Unknown server error.");
+      msgBox.innerHTML = '<div class="msg msg-err"><strong>Submission failed:</strong>' + errs + "</div>";
+      btn.disabled = false; btn.textContent = "Submit Team";
+    }
+  } catch(e) {
+    msgBox.innerHTML = '<div class="msg msg-err">Network error \u2014 please try again.</div>';
+    btn.disabled = false; btn.textContent = "Submit Team";
+  }
+}
+
+// ── MY TEAM LOOKUP ────────────────────────────────
+// ★ NEW FUNCTION — calls getTeam action on the backend
+async function lookupTeam() {
+  var email  = document.getElementById("lookupEmail").value.trim().toLowerCase();
+  var result = document.getElementById("lookupResult");
+
+  if (!email || email.indexOf("@") === -1) {
+    result.innerHTML = '<div class="msg msg-err">Please enter a valid email address.</div>';
+    return;
+  }
+
+  // Show loading state
+  result.innerHTML = '<p style="color:var(--muted);font-size:13px"><span class="lookup-spin"></span>Looking up your team\u2026</p>';
+
+  try {
+    var res = await apiFetch({ action: "getTeam", email: email });
+
+    if (!res.success) {
+      result.innerHTML = '<div class="msg msg-err">'
+        + (res.error || "No team found for that email address.") + '</div>';
+      return;
+    }
+
+    // Build player list from the returned data
+    var playerRows = (res.playerNames || "").split(",").map(function(name) {
+      name = name.trim();
+      var isCap = name === res.captainName;
+      return '<li class="team-player-item">'
+        + '<span class="team-player-name">' + esc(name) + '</span>'
+        + (isCap ? '<span class="cap-badge">CAPTAIN</span>' : '')
+        + '</li>';
+    }).join("");
+
+    result.innerHTML =
+      '<div class="team-card">'
+      + '<div class="team-card-header">'
+      + '<div class="team-card-name">' + esc(res.teamName) + '</div>'
+      + '<div class="team-card-meta">' + esc(res.submitterName) + ' \u00b7 submitted ' + esc(res.timestamp) + '</div>'
+      + '</div>'
+      + '<ul class="team-player-list">' + playerRows + '</ul>'
+      + '<div class="team-budget">Budget spent: <strong>\u00a3' + Number(res.totalPrice).toFixed(1) + 'm</strong> / \u00a3' + BUDGET + 'm</div>'
+      + '</div>';
+
+  } catch(e) {
+    result.innerHTML = '<div class="msg msg-err">Network error \u2014 please try again.</div>';
+  }
+}
+
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+</script>
+</body>
+</html>

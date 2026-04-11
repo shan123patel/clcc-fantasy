@@ -9,21 +9,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --cream:   #F5F0E8;
-  --cream-2: #EDE8DF;
-  --dark:    #1A1A14;
-  --green:   #2D5016;
-  --green-l: #3D6B20;
-  --green-hl:rgba(45,80,22,0.08);
-  --lime:    #8BBF3C;
-  --gold:    #C9A84C;
-  --gold-bg: rgba(201,168,76,0.12);
+  --cream:   #F0F4FA;
+  --cream-2: #E4EAF5;
+  --dark:    #0D1B2A;
+  --green:   #1B3A6B;
+  --green-l: #254E94;
+  --green-hl:rgba(27,58,107,0.08);
+  --lime:    #D4A820;
+  --gold:    #D4A820;
+  --gold-bg: rgba(212,168,32,0.12);
   --red:     #B83227;
   --red-bg:  rgba(184,50,39,0.09);
-  --ink:     #2C2C20;
-  --muted:   #6B6B54;
-  --faint:   #A8A892;
-  --rule:    rgba(45,80,22,0.12);
+  --ink:     #0D1B2A;
+  --muted:   #4A5A72;
+  --faint:   #8A9BB5;
+  --rule:    rgba(27,58,107,0.14);
   --surface: #FFFFFF;
   --sans:    'DM Sans', system-ui, sans-serif;
   --serif:   'Playfair Display', Georgia, serif;
@@ -34,11 +34,11 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;min-height:100dvh;-webkit-font-smoothing:antialiased;}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(45,80,22,0.035) 39px,rgba(45,80,22,0.035) 40px);}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(27,58,107,0.035) 39px,rgba(27,58,107,0.035) 40px);}
 button{cursor:pointer;font-family:inherit;}
 input{font-family:inherit;}
 
-header{background:var(--blue);padding:24px 40px 22px;position:relative;overflow:hidden;}
+header{background:var(--green);padding:24px 40px 22px;position:relative;overflow:hidden;}
 header::after{content:'🏏';position:absolute;right:40px;top:50%;transform:translateY(-50%) rotate(-20deg);font-size:68px;opacity:.1;pointer-events:none;}
 .hdr{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;}
 .logo{color:var(--lime);flex-shrink:0;}
@@ -84,9 +84,9 @@ header h1 span{color:var(--lime);}
 .psquad{font-size:11px;color:var(--muted);margin-top:1px;}
 .rbadge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.8px;text-transform:uppercase;padding:2px 7px;border-radius:10px;font-weight:500;}
 .r-WK {background:#FFF0D0;color:#7A5200;}
-.r-BAT{background:#D4EAFF;color:#003F7A;}
-.r-AR {background:#EAD4FF;color:#4A007A;}
-.r-BWL{background:#D4FFE8;color:#005A28;}
+.r-BAT{background:#D4E4FF;color:#0A2A6B;}
+.r-AR {background:#D4E8FF;color:#003F7A;}
+.r-BWL{background:#D4EEFF;color:#00427A;}
 .pprice{font-family:var(--mono);font-size:13px;color:var(--green);font-weight:500;}
 .pcell{text-align:center;width:50px;}
 
@@ -315,7 +315,7 @@ header h1 span{color:var(--lime);}
 const API_URL       = "https://script.google.com/macros/s/AKfycbw8ZLTsmClvJnVGUJ2JZPXSCxuAV2M4p6zdco3PWiN7CvcqbcboHioB98dvmAjD-ElV-g/exec";
 const BUDGET        = 100;
 const SQUAD_SIZE    = 11;
-const MIN_PER_SQUAD = 2; 
+const MIN_PER_SQUAD = 2;
 const ROLE_LIMITS   = {
   "Wicketkeeper": { min:1, max:99, abbr:"WK"  },
   "Batter":       { min:3, max:99, abbr:"BAT" },
